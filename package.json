@@ -1,0 +1,30 @@
+{
+  "name": "read-estimate",
+  "version": "1.0.0",
+  "description": "A CLI tool to find out how long it will take to read books/documents within a directory",
+  "main": "index.js",
+  "bin": {
+    "read-estimate": "./index.js"
+  },
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "Michael Tsegaye",
+  "license": "MIT",
+  "dependencies": {
+    "cli-table3": "^0.6.5",
+    "dayjs": "^1.11.12",
+    "mammoth": "^1.8.0",
+    "ora": "^8.0.1",
+    "pdf-parse": "^1.1.1",
+    "textract": "^2.5.0",
+    "vitest": "^2.0.5",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
