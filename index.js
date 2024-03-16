@@ -9,7 +9,7 @@ const textract = require('textract');
 const util = require('util');
 const pdf = require('pdf-parse');
 const mammoth = require('mammoth');
-// import ora from 'ora';
+const ora = require('ora');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
@@ -88,7 +88,7 @@ async function getFileStats(filePath) {
 }
 
 async function processFiles(input) {
-  // const spinner = ora('Processing files...').start();
+  const spinner = ora('Processing documents...').start();
 
   try {
     const stats = await fs.stat(input);
@@ -105,7 +105,7 @@ async function processFiles(input) {
     }
 
     if (files.length === 0) {
-      // spinner.fail('No readable documents found');
+      spinner.fail('No readable documents found');
       return;
     }
 
@@ -141,7 +141,7 @@ async function processFiles(input) {
       totalReadingTimeMinutes += result.readingTimeMinutes;
     });
 
-    // spinner.succeed('Processing complete');
+    spinner.stop()
     console.log(table.toString());
 
     if (results.length > 1) {
@@ -152,7 +152,7 @@ async function processFiles(input) {
       console.log(`Total reading time: ${totalReadingTime}`);
     }
   } catch (error) {
-    // spinner.fail(error.message);
+    spinner.fail(error.message);
   }
 }
 
