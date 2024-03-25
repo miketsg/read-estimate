@@ -12,7 +12,7 @@ const mammoth = require('mammoth');
 const ora = require('ora');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-
+const colors = require('@colors/colors');
 dayjs.extend(duration);
 
 const SUPPORTED_FORMATS = ['.pdf', '.txt', '.md',  '.docx', '.rtf', '.epub', '.html' ];
@@ -116,27 +116,28 @@ async function processFiles(input) {
     }
 
     const table = new Table({
-      head: ['#', 'File', 'Format', 'Word Count', 'Pages', 'Reading Time'],
+      head: ['#', 'File', 'Format', 'Pages', 'Reading Time']
+      .map((content) => ({ content: colors.bold(content) })),
       style: {
         head: ['cyan'],
-        border: ['gray']
-      }
+      },
+      colWidths: [5, 60],
+      wordWrap: true,
+      wrapWords: true,
+      wrapOnWordBoundary: true,
     });
 
-    let totalWordCount = 0;
     let totalPageCount = 0;
     let totalReadingTimeMinutes = 0;
 
     results.forEach((result, index) => {
       table.push([
-        index + 1,
-        result.file,
+        colors.bold(index + 1),
+        colors.bold(result.file),
         result.format,
-        result.wordCount.toLocaleString(),
         result.pageCount.toLocaleString(),
         result.readingTime
       ]);
-      totalWordCount += result.wordCount;
       totalPageCount += result.pageCount;
       totalReadingTimeMinutes += result.readingTimeMinutes;
     });
@@ -146,8 +147,7 @@ async function processFiles(input) {
 
     if (results.length > 1) {
       const totalReadingTime = dayjs.duration(totalReadingTimeMinutes, 'minutes').format('HH:mm:ss');
-      console.log(`\nTotal: ${results.length} file(s)`);
-      console.log(`Total word count: ${totalWordCount.toLocaleString()}`);
+      console.log(`\nTotal: ${results.length} documents`);
       console.log(`Total page count: ${totalPageCount.toLocaleString()}`);
       console.log(`Total reading time: ${totalReadingTime}`);
     }
