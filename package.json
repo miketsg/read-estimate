@@ -1,6 +1,6 @@
 {
   "name": "read-estimate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI tool to find out how long it will take to read books/documents within a directory",
   "main": "index.js",
   "bin": {
@@ -13,7 +13,6 @@
   "license": "MIT",
   "dependencies": {
     "cli-table3": "^0.6.5",
-    "dayjs": "^1.11.12",
     "mammoth": "^1.8.0",
     "ora": "5.4.1",
     "pdf-parse": "^1.1.1",
@@ -23,8 +22,5 @@
   },
   "devDependencies": {
     "vitest": "^2.0.5"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }

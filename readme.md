@@ -1,6 +1,9 @@
 # read-estimate
 
 read-estimate is a CLI tool to find out how long it will take to read books or documents within a directory.
+
+
+![demo](demo.gif)
 ## Installation
 
 Run
@@ -23,7 +26,7 @@ If no path is provided, it will process documents in the current directory.
 ### Options
 
 - `--wpm <number>`: Set the words per minute reading speed (default: 200)
-- `--timesort`: Sort results by reading time duration in descending order
+- `--timesort`: Sort books by reading time duration in descending order
 - `--help`: Show help information
 
 ### Examples

@@ -2,8 +2,6 @@
 
 const fs = require('fs').promises;
 const path = require('path');
-const dayjs = require('dayjs');
-const duration = require('dayjs/plugin/duration');
 const Table = require('cli-table3');
 const textract = require('textract');
 const util = require('util');
@@ -13,7 +11,7 @@ const ora = require('ora');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const colors = require('@colors/colors');
-dayjs.extend(duration);
+
 
 const SUPPORTED_FORMATS = ['.pdf', '.txt', '.md',  '.docx', '.rtf', '.epub', '.html' ];
 
@@ -34,7 +32,7 @@ const argv = yargs(hideBin(process.argv))
 
 // Validate wpm
 if (isNaN(argv.wpm) || argv.wpm <= 0) {
-  console.error('Error: wpm must be a positive number');
+  console.error('Invalid wpm value');
   process.exit(1);
 }
 
@@ -63,10 +61,8 @@ async function getWordCount(filePath) {
         pageCount = Math.ceil(text.length / 1781);
     }
   } catch (error) {
-    // console.error(`Error processing ${filePath}: ${error.message}`);
     return { wordCount: 0, pageCount: 0 };
   }
-
 
   const words = text.trim().split(/\s+/);
   return { wordCount: words.length, pageCount };
@@ -75,7 +71,10 @@ async function getWordCount(filePath) {
 async function getFileStats(filePath) {
   const { wordCount, pageCount } = await getWordCount(filePath);
   const readingTimeMinutes = Math.ceil(wordCount / WORDS_PER_MINUTE);
-  const readingTime = dayjs.duration(readingTimeMinutes, 'minutes').format('HH:mm:ss');
+
+  const hours = Math.floor(readingTimeMinutes / 60);
+  const minutes = readingTimeMinutes % 60;
+  const readingTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 
   return {
     file: path.basename(filePath),
@@ -105,7 +104,7 @@ async function processFiles(input) {
     }
 
     if (files.length === 0) {
-      spinner.fail('No readable documents found');
+      spinner.fail('No supported documents found');
       return;
     }
 
@@ -128,7 +127,7 @@ async function processFiles(input) {
     });
 
     let totalPageCount = 0;
-    let totalReadingTimeMinutes = 0;
+    let totalMinutes = 0;
 
     results.forEach((result, index) => {
       table.push([
@@ -139,14 +138,19 @@ async function processFiles(input) {
         result.readingTime
       ]);
       totalPageCount += result.pageCount;
-      totalReadingTimeMinutes += result.readingTimeMinutes;
+      totalMinutes += result.readingTimeMinutes;
     });
 
-    spinner.stop()
+    spinner.stop();
     console.log(table.toString());
 
     if (results.length > 1) {
-      const totalReadingTime = dayjs.duration(totalReadingTimeMinutes, 'minutes').format('HH:mm:ss');
+      // Calculate total hours and remaining minutes
+      const totalHours = Math.floor(totalMinutes / 60);
+      const remainingMinutes = Math.floor(totalMinutes % 60);
+
+      const totalReadingTime = `${totalHours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+      
       console.log(`\nTotal: ${results.length} documents`);
       console.log(`Total page count: ${totalPageCount.toLocaleString()}`);
       console.log(`Total reading time: ${totalReadingTime}`);
